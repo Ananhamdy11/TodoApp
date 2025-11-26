@@ -113,6 +113,7 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                     onPressed: () {
                       if (titleController.text.isEmpty) return;
 
+                      final now = DateTime.now();
                       final todo = TodoModel(
                         id: "",
                         title: titleController.text.trim(),
@@ -121,11 +122,14 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                             ? "${selectedDate!.day.toString().padLeft(2, '0')}/"
                                   "${selectedDate!.month.toString().padLeft(2, '0')}/"
                                   "${selectedDate!.year}"
-                            : "",
+                            : "${now.day.toString().padLeft(2, '0')}/"
+                                  "${now.month.toString().padLeft(2, '0')}/"
+                                  "${now.year}",
                         time: selectedTime != null
                             ? "${selectedTime!.hour.toString().padLeft(2, '0')}:"
                                   "${selectedTime!.minute.toString().padLeft(2, '0')}"
-                            : "",
+                            : "${now.hour.toString().padLeft(2, '0')}:"
+                                  "${now.minute.toString().padLeft(2, '0')}",
                         done: false,
                       );
 

@@ -2,13 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:todo_app/core/config/app_theme.dart';
 import 'package:todo_app/core/cubit/theme_cubit.dart';
 import 'package:todo_app/core/data/shared_prefernces.dart';
 import 'package:todo_app/core/services/auth_services.dart';
+import 'package:todo_app/core/services/notification_services.dart';
 import 'package:todo_app/features/auth/presentation/manger/cubit/auth_cubit.dart';
 import 'package:todo_app/features/auth/presentation/views/signin_view.dart';
 import 'package:todo_app/features/auth/presentation/views/signup_view.dart';
+import 'package:todo_app/features/home/data/models/hive/todo_model.dart';
 import 'package:todo_app/features/home/presentation/manager/cubit/todos_cubit.dart';
 import 'package:todo_app/features/home/presentation/views/home_view.dart';
 import 'package:todo_app/features/onboarding/presentation/views/onboarding_view.dart';
@@ -18,9 +22,18 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
   await MySharedPreferences().init();
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(TodoModelAdapter());
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  await Hive.openBox<TodoModelHive>('todos');
+  await NotificationService.init();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

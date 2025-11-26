@@ -4,8 +4,9 @@ class DatabaseServices {
   final DatabaseReference db = FirebaseDatabase.instance.ref();
 
   Future<void> addTodos(String uid, Map<String, dynamic> todo) async {
-    String id = db.child('users/$uid/todos').push().key!;
+    final id = todo['id'] ?? DateTime.now().millisecondsSinceEpoch.toString();
     todo['id'] = id;
+
     await db.child('users/$uid/todos/$id').set(todo);
   }
 
